@@ -1,0 +1,24 @@
+server:
+  port: ${port:10086}
+spring:
+  application:
+    name: eureka-server
+eureka:
+  client:
+    service-url:
+      # eureka 服务地址，如果是集群的话；需要指定其它集群eureka地址
+      defaultZone: ${defaultZone:http://127.0.0.1:10086/eureka}
+    # 不注册自己
+    register-with-eureka: false
+    # 不拉取服务
+    fetch-registry: false
+  server:
+    #    失效剔除时间 ms
+    eviction-interval-timer-in-ms: 1000
+    #    关闭自我保护模式
+    #    当一个服务未按时进行心跳续约时，Eureka会统计最近15分钟心跳
+    #    失败的服务实例的比例是否超过了85%，当EurekaServer节点在短时间内丢失过多客户端（可能发生了
+    #    网络分区故障）。在生产环境下，因为网络延迟等原因，心跳失败实例的比例很有可能超标，但是此时
+    #    就把服务剔除列表并不妥当，因为服务可能没有宕机。Eureka就会把当前实例的注册信息保护起来，不
+    #    予剔除。生产环境下这很有效，保证了大多数服务依然可用。
+    enable-self-preservation: false
