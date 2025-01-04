@@ -15,13 +15,13 @@ public class RetryEventListener {
     public RetryEventListener(RetryRegistry retryRegistry) {
         retryRegistry.retry(RETRY_NAME).getEventPublisher()
                 .onRetry(event -> {
-                    logger.debug("尝试重试: " + event);
+                    logger.debug("尝试重新调用: " + event);
                 }).onSuccess(event -> {
-                    logger.debug("重试成功:" + event);
+                    logger.debug("重试后调用失败:" + event);
                 }).onError(event -> {
-                    logger.error("重试失败: " + event);
+                    logger.error("重试后仍然失败: " + event);
                 }).onIgnoredError(event -> {
-                    logger.debug("忽略错误:" + event);
+                    logger.debug("重试器忽略的异常:" + event);
                 });
 
     }

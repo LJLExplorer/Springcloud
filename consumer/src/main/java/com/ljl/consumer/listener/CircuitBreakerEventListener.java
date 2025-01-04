@@ -26,13 +26,13 @@ public class CircuitBreakerEventListener {
                     logger.debug("故障率超标: " + event);
                 })
                 .onCallNotPermitted(event -> {
-                    logger.debug("调用被禁止: " + event);
+                    logger.debug("超过调用失败次数，服务被禁止调用: " + event);
                 })
                 .onError(event -> {
-                    logger.error("错误事件: " + event);
+                    logger.error("服务调用失败: " + event);
                 })
                 .onSuccess(event -> {
-                    logger.debug("成功事件: " + event);
+                    logger.debug("服务调用成功: " + event);
                 });
     }
 }

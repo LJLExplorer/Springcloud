@@ -248,36 +248,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import static com.ljl.consumer.utils.constant.LimterConstant.CIRCUIT_BREAKER_NAME;
+
 //监听熔断器状态
 @Component
 public class CircuitBreakerEventListener {
 
+    private final Logger logger = LoggerFactory.getLogger(CircuitBreakerEventListener.class);
+
     public CircuitBreakerEventListener(CircuitBreakerRegistry circuitBreakerRegistry) {
-
-        final Logger logger = LoggerFactory.getLogger(CircuitBreakerEventListener.class);
-
         // 获取注册的熔断器实例
-        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("myCircuitBreaker");
-
+        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(CIRCUIT_BREAKER_NAME);
         // 注册监听器
         circuitBreaker.getEventPublisher()
                 .onStateTransition(event -> {
                     logger.debug("服务器状态: " + event);
                 })
                 .onFailureRateExceeded(event -> {
-                   logger.debug("故障率超标: " + event);
+                    logger.debug("故障率超标: " + event);
                 })
                 .onCallNotPermitted(event -> {
-                    logger.debug("调用被禁止: " + event);
+                    logger.debug("超过调用失败次数，服务被禁止调用: " + event);
                 })
                 .onError(event -> {
-                    logger.debug("错误事件: " + event);
+                    logger.error("服务调用失败: " + event);
                 })
                 .onSuccess(event -> {
-                    logger.debug("成功事件: " + event);
+                    logger.debug("服务调用成功: " + event);
                 });
     }
 }
+
 ```
 
 ### 限流器
@@ -355,9 +356,10 @@ public class ConsumerController {
 
     // @CircuitBreaker：应用断路器，指定断路器名称和回退方法。
     // fallback(Throwable t)：当断路器打开或服务调用失败时调用的回退方法。
+    // 熔断器和限流器时需要将fallbackMethod加在熔断器上,否则不走熔断器了（原因未知 试出来的）
     @GetMapping("/user/{id}")
     @CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "Fallback")
-    @RateLimiter(name = RATE_LIMITER_NAME, fallbackMethod = "Fallback")
+    @RateLimiter(name = RATE_LIMITER_NAME)
     public User queryById(@PathVariable Long id) {
         if (id < 0) {
             log.error("id不能为负");
@@ -411,6 +413,166 @@ public class RateLimiterEventListener {
                     logger.error("请求过多，限流器开启" + event);
                 });
     }
+}
+
+```
+
+### 重试
+
+application.yml
+
+```
+resilience4j:
+  # 熔断器
+  circuitbreaker:
+    # 定义不同的熔断器实例
+    instances:
+      # 熔断器名称
+      myCircuitBreaker:
+        base-config: default
+    configs:
+      default:
+        # 是否注册健康指示器 用于监控
+        register-health-indicator: true
+        # 滑动窗口大小 用于统计失败率
+        sliding-window-size: 10
+        # 触发熔断器的前的最小调用次数
+        minimum-number-of-calls: 3
+        # 失败率阈值 超过该值断路器将打开(需要将限流器的错误排除故障率统计)
+        failure-rate-threshold: 50
+        # 断路器打开后等待的秒
+        wait-duration-in-open-state: 10s
+        # 半开状态下允许的调用次数
+        permitted-number-of-calls-in-half-open-state: 3
+        # 是否自动从打开状态过渡到半开状态
+        automatic-transition-from-open-to-half-open-enabled: true
+        # 捕获所有异常
+        record-exceptions:
+          - java.lang.Exception
+          - java.lang.RuntimeException
+          - java.lang.Throwable
+        ignore-exceptions:
+          - io.github.resilience4j.ratelimiter.RequestNotPermitted
+  # 限流器
+  ratelimiter:
+    instances:
+      myRateLimiter:
+        limitForPeriod: 5                 # 每个周期允许的最大请求数
+        limitRefreshPeriod: 1s            # 限流刷新周期
+        timeoutDuration: 500ms            # 超过限流等待的最大时间
+  # 重试
+  retry:
+      instances:
+        myRetry:
+          # 最大重试次数(3 就是1次调用+2次重试)
+          maxAttempts: 3
+          # 重试之间的等待时间
+          wait-duration: 2s
+          retryExceptions:
+            - java.lang.IllegalStateException
+            - java.io.IOException
+            - java.util.concurrent.TimeoutException
+            - org.springframework.web.client.ResourceAccessException
+```
+
+ConsumerController
+
+```
+import com.ljl.consumer.domain.dto.User;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import static com.ljl.consumer.utils.constant.LimterConstant.*;
+
+
+@Slf4j
+@RestController
+@RequestMapping("/consumer")
+public class ConsumerController {
+
+    private Logger logger = LoggerFactory.getLogger(ConsumerController.class);
+
+    @Resource
+    private RestTemplate restTemplate;
+
+    @GetMapping("/user/{id}")
+    // @CircuitBreaker：应用断路器，指定断路器名称和回退方法。
+    // fallback(Throwable t)：当断路器打开或服务调用失败时调用的回退方法。
+    // 熔断器和限流器时需要将fallbackMethod加在熔断器上,否则不走熔断器了（原因未知 试出来的）
+    // 熔断器、限流器和重试都在时需要将fallbackMethod加在重试器上 否则不走重试器（原因未知 试出来的）
+    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME)
+    @RateLimiter(name = RATE_LIMITER_NAME)
+    @Retry(name = RETRY_NAME, fallbackMethod = "fallback")
+    public User queryById(@PathVariable Long id) {
+        if (id < 0) {
+            logger.error("id不能为负");
+            throw new RuntimeException("Invalid id");
+        }
+
+        String url = "http://user-service/user/" + id;
+        return restTemplate.getForObject(url, User.class);
+    }
+
+    @GetMapping("/root/{id}")
+    public User queryRootById(@PathVariable Long id) {
+        String url = "http://root-service/root/" + id;
+        return restTemplate.getForObject(url, User.class);
+    }
+
+    // 回退方法，当熔断器触发时调用
+    public User fallback(Long id, Throwable t) {
+        logger.error("服务不可用，进入回退方法: {}", t.getMessage());
+        User user = new User();
+        user.setId(id);
+        if( t instanceof RequestNotPermitted)
+            user.setName("请求过于频繁，请稍后再试。");
+        else
+            user.setName("服务暂时不可用，请稍后再试。");
+        return user;
+    }
+}
+```
+
+RetryEventListener
+
+```
+import io.github.resilience4j.retry.RetryRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import static com.ljl.consumer.utils.constant.LimterConstant.RETRY_NAME;
+
+@Component
+public class RetryEventListener {
+
+    private final Logger logger = LoggerFactory.getLogger(RetryEventListener.class);
+
+    public RetryEventListener(RetryRegistry retryRegistry) {
+        retryRegistry.retry(RETRY_NAME).getEventPublisher()
+                .onRetry(event -> {
+                    logger.debug("尝试重新调用: " + event);
+                }).onSuccess(event -> {
+                    logger.debug("重试后调用失败:" + event);
+                }).onError(event -> {
+                    logger.error("重试后仍然失败: " + event);
+                }).onIgnoredError(event -> {
+                    logger.debug("重试器忽略的异常:" + event);
+                });
+
+    }
+
 }
 
 ```

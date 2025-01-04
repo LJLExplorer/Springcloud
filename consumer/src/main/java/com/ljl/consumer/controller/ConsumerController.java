@@ -4,6 +4,7 @@ import com.ljl.consumer.domain.dto.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -30,8 +31,11 @@ public class ConsumerController {
     @GetMapping("/user/{id}")
     // @CircuitBreaker：应用断路器，指定断路器名称和回退方法。
     // fallback(Throwable t)：当断路器打开或服务调用失败时调用的回退方法。
-    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "fallback")
-    @RateLimiter(name = RATE_LIMITER_NAME, fallbackMethod = "fallback")
+    // 熔断器和限流器时需要将fallbackMethod加在熔断器上,否则不走熔断器了（原因未知 试出来的）
+    // 熔断器、限流器和重试都在时需要将fallbackMethod加在重试器上 否则不走重试器（原因未知 试出来的）
+    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME)
+    @RateLimiter(name = RATE_LIMITER_NAME)
+    @Retry(name = RETRY_NAME, fallbackMethod = "fallback")
     public User queryById(@PathVariable Long id) {
         if (id < 0) {
             logger.error("id不能为负");

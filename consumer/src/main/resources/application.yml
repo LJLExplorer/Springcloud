@@ -24,11 +24,11 @@ resilience4j:
         # 是否注册健康指示器 用于监控
         register-health-indicator: true
         # 滑动窗口大小 用于统计失败率
-        sliding-window-size: 20
+        sliding-window-size: 10
         # 触发熔断器的前的最小调用次数
         minimum-number-of-calls: 3
         # 失败率阈值 超过该值断路器将打开(需要将限流器的错误排除故障率统计)
-        failure-rate-threshold: 99
+        failure-rate-threshold: 50
         # 断路器打开后等待的秒
         wait-duration-in-open-state: 10s
         # 半开状态下允许的调用次数
@@ -42,7 +42,6 @@ resilience4j:
           - java.lang.Throwable
         ignore-exceptions:
           - io.github.resilience4j.ratelimiter.RequestNotPermitted
-          - java.io.IOException
   # 限流器
   ratelimiter:
     instances:
@@ -50,19 +49,19 @@ resilience4j:
         limitForPeriod: 5                 # 每个周期允许的最大请求数
         limitRefreshPeriod: 1s            # 限流刷新周期
         timeoutDuration: 500ms            # 超过限流等待的最大时间
-  # 未知bug 重试与 熔断器或限流器 结合就会失效，仅单独使用时可以正常运行
-  #retry:
-  #    instances:
-  #      myRetry:
-  #        # 最大重试次数(3 就是1次调用+2次重试)
-  #        maxAttempts: 3
-  #        # 重试之间的等待时间
-  #        wait-duration: 2s
-  #        retryExceptions:
-  #          - java.lang.IllegalStateException
-  #          - java.io.IOException
-  #          - java.util.concurrent.TimeoutException
-  #          - org.springframework.web.client.ResourceAccessException
+  # 重试
+  retry:
+      instances:
+        myRetry:
+          # 最大重试次数(3 就是1次调用+2次重试)
+          maxAttempts: 3
+          # 重试之间的等待时间
+          wait-duration: 2s
+          retryExceptions:
+            - java.lang.IllegalStateException
+            - java.io.IOException
+            - java.util.concurrent.TimeoutException
+            - org.springframework.web.client.ResourceAccessException
 
 logging:
   level:
