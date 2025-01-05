@@ -1,5 +1,7 @@
 package com.ljl.consumer.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ljl.consumer.domain.dto.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -36,7 +38,7 @@ public class ConsumerController {
     @CircuitBreaker(name = CIRCUIT_BREAKER_NAME)
     @RateLimiter(name = RATE_LIMITER_NAME)
     @Retry(name = RETRY_NAME, fallbackMethod = "fallback")
-    public User queryById(@PathVariable Long id) {
+    public User queryById(@PathVariable Long id) throws JsonProcessingException {
         if (id < 0) {
             logger.error("id不能为负");
             throw new RuntimeException("Invalid id");

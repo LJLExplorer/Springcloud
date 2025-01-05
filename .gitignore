@@ -36,3 +36,4 @@ pom-war.xml
 *.iml
 logs
 /.idea/
+*.DS_Store

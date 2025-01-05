@@ -4,7 +4,28 @@ spring:
   cloud:
     loadbalancer:
       enabled: true
-
+    openfeign:
+      client:
+        config:
+          default:
+            # 连接超时时间 3s
+            connect-timeout: 3000
+            # 读取超时时间 1s
+            read-timeout: 1000
+          # 单独某个服务配置 会覆盖全局配置
+          user-service:
+            connect-timeout: 2000
+            read-timeout: 2000
+      httpclient:
+        hc5:
+          enabled: true
+      compression:
+        request:
+          enabled: true  #请求开启压缩功能
+          min-request-size: 2048 #最小触发压缩的大小
+          mime-types: text/xml,application/xml,application/json #触发压缩数据类型
+        response: #响应也开启压缩功能
+          enabled: true
 eureka:
   client:
     service-url:
@@ -46,23 +67,26 @@ resilience4j:
   ratelimiter:
     instances:
       myRateLimiter:
+        base-config: default
+    configs:
+      default:
         limitForPeriod: 5                 # 每个周期允许的最大请求数
-        limitRefreshPeriod: 1s            # 限流刷新周期
+        limitRefreshPeriod: 10s            # 限流刷新周期
         timeoutDuration: 500ms            # 超过限流等待的最大时间
   # 重试
   retry:
-      instances:
-        myRetry:
-          # 最大重试次数(3 就是1次调用+2次重试)
-          maxAttempts: 3
-          # 重试之间的等待时间
-          wait-duration: 2s
-          retryExceptions:
-            - java.lang.IllegalStateException
-            - java.io.IOException
-            - java.util.concurrent.TimeoutException
-            - org.springframework.web.client.ResourceAccessException
-
+    instances:
+      myRetry:
+        # 最大重试次数(3 就是1次调用+2次重试)
+        maxAttempts: 3
+        # 重试之间的等待时间
+        wait-duration: 2s
+        retryExceptions:
+          - java.lang.IllegalStateException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - feign.FeignException
 logging:
   level:
     io.github.resilience4j: DEBUG

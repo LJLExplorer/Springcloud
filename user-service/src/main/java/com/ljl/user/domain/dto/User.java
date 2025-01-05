@@ -1,5 +1,6 @@
 package com.ljl.user.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.io.Serializable;
@@ -22,10 +23,13 @@ public class User implements Serializable {
     // 性别，1男性，2女性
     private Integer sex;
     // 出生日期
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date birthday;
     // 创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date created;
     // 更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updated;
     // 备注
     private String note;
