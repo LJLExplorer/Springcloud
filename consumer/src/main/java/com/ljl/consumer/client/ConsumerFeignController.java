@@ -39,7 +39,6 @@ public class ConsumerFeignController {
             logger.error("id不能为负");
             throw new RuntimeException();
         }
-        String s = userClient.queryById(id);
         return userClient.queryById(id);
     }
 

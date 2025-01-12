@@ -21,14 +21,14 @@
         border-color: transparent;
         color: rgb(68, 68, 68);
         font-family: "Courier New", sans-serif;
-        font-size: 12px</style><link rel="stylesheet" href="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/blog-common.min.css">
+        font-size: 12px</style><link rel="stylesheet" href="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/blog-common.min.css">
     
 
-    <link id="MainCss" rel="stylesheet" href="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/bundle-codinglife.min.css">
-        <link id="highlighter-theme-cnblogs" type="text/css" rel="stylesheet" href="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/cnblogs.css">
+    <link id="MainCss" rel="stylesheet" href="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/bundle-codinglife.min.css">
+        <link id="highlighter-theme-cnblogs" type="text/css" rel="stylesheet" href="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/cnblogs.css">
     
     
-    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/bundle-codinglife-mobile.min.css">
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/bundle-codinglife-mobile.min.css">
     
     <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/itxiaoshen/rss">
     <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/itxiaoshen/rsd.xml">
@@ -96,8 +96,8 @@
             window.currentPostId = 16247702;
             window.currentPostDateAdded = '2022-05-09 01:00';
         </script>
-    <script src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/jquery-3.3.1.min.js"></script>
-    <script src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/blog-common.min.js"></script><style>.medium-zoom-overlay {
+    <script src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/jquery-3.3.1.min.js"></script>
+    <script src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/blog-common.min.js"></script><style>.medium-zoom-overlay {
   position: fixed;
   top: 0;
   right: 0;
@@ -139,9 +139,9 @@
   cursor: zoom-out;
   will-change: transform;
 }
-</style><script id="hljs-script" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/highlight.min.js" type="text/javascript" async=""></script>
+</style><script id="hljs-script" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/highlight.min.js" type="text/javascript" async=""></script>
     
-<script id="mathjax" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/MathJax.js" type="text/javascript" async=""></script><meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/938570a0b63b56671a862e8bda11577a.png"><style type="text/css" id="tts-styles">[data-tts-block-id].tts-active {background: rgba(206, 225, 255, 0.9) !important;} [data-tts-sentence-id].tts-active {background: rgba(0, 89, 191, 0.7) !important;}</style><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+<script id="mathjax" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/MathJax.js" type="text/javascript" async=""></script><meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/938570a0b63b56671a862e8bda11577a.png"><style type="text/css" id="tts-styles">[data-tts-block-id].tts-active {background: rgba(206, 225, 255, 0.9) !important;}  [data-tts-sentence-id].tts-active {background: rgba(0, 89, 191, 0.7) !important;}</style><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
 .MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
 .MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
 .MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
@@ -241,7 +241,7 @@
     <a name="top"></a>
         <a href="https://www.marscode.cn/?utm_source=advertising&amp;utm_medium=cnblogs.com_ug_cpa&amp;utm_term=hw_marscode_cnblogs&amp;utm_content=home" onclick="countCreativeClicks(&#39;C0-字节-Marcodes&#39;)" target="_blank" rel="nofollow">
             <div class="imagebar forpc" style="background-size: contain;background-color:#000;">
-                <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/35695-20241223074306759-703982459.jpg" style="" onload="countCreativeImpressions(&#39;C0-字节-Marcodes&#39;)">
+                <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/35695-20241223074306759-703982459.jpg" style="" onload="countCreativeImpressions(&#39;C0-字节-Marcodes&#39;)">
                 
                 
                 <span id="c0_impression" style="display:none"></span>
@@ -249,7 +249,7 @@
         </a>
         <div id="imagebar" class="imagebar-mobile imagebar-text-mobile formobile">
                 <a href="https://www.doubao.com/?channel=cnblogs&amp;source=hw_db_cnblogs" onclick="countCreativeClicks(&#39;M2-字节-豆包&#39;)" rel="nofollow">
-                    <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/35695-20241201073014811-1847930772.jpg" alt="" onload="countCreativeImpressionsOnMobile(&#39;M2-字节-豆包&#39;)">
+                    <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/35695-20241201073014811-1847930772.jpg" alt="" onload="countCreativeImpressionsOnMobile(&#39;M2-字节-豆包&#39;)">
                     <span id="m2_impression" style="display:none"></span>
                 </a>
         </div>
@@ -258,7 +258,7 @@
             <ul id="nav_left" class="navbar-list navbar-left">
                 <li class="navbar-branding">
                     <a href="https://www.cnblogs.com/" title="开发者的网上家园" role="banner">
-                        <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/logo.svg" alt="博客园Logo">
+                        <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/logo.svg" alt="博客园Logo">
                     </a>
                 </li>
                     <li><a href="https://cnblogs.vip/">会员</a></li>
@@ -281,20 +281,20 @@
                     <form id="zzk_search" class="navbar-search dropdown" action="https://zzk.cnblogs.com/s" method="get" role="search">
                         <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="search" tabindex="3" autocomplete="off">
                         <button id="zzk_search_button" onclick="window.navbarSearchManager.triggerActiveOption()">
-                            <img id="search_icon" class="focus-hidden" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/search.svg" alt="搜索">
-                            <img class="hidden focus-visible" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/enter.svg" alt="搜索">
+                            <img id="search_icon" class="focus-hidden" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/search.svg" alt="搜索">
+                            <img class="hidden focus-visible" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/enter.svg" alt="搜索">
                         </button>
                         <ul id="navbar_search_options" class="dropdown-menu quick-search-menu">
                             <li tabindex="0" class="active" onclick="zzkSearch(event, document.getElementById(&#39;zzk_search_input&#39;).value)">
                                 <div class="keyword-wrapper">
-                                    <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/search.svg" alt="搜索">
+                                    <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/search.svg" alt="搜索">
                                     <div class="keyword"></div>
                                 </div>
                                 <span class="search-area">所有博客</span>
                             </li>
                                     <li tabindex="1" onclick="zzkBlogSearch(event, &#39;itxiaoshen&#39;, document.getElementById(&#39;zzk_search_input&#39;).value)">
                                         <div class="keyword-wrapper">
-                                            <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/search.svg" alt="搜索">
+                                            <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/search.svg" alt="搜索">
                                             <div class="keyword"></div>
                                         </div>
                                         <span class="search-area">当前博客</span>
@@ -304,28 +304,28 @@
                 </li>
                 <li id="navbar_login_status" class="navbar-list">
                     <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
-                        <img id="new_post_icon" class="navbar-icon" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/newpost.svg" alt="写随笔">
+                        <img id="new_post_icon" class="navbar-icon" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/newpost.svg" alt="写随笔">
                     </a>
                     <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
-                        <img id="myblog_icon" class="navbar-icon" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/myblog.svg" alt="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/myblog.svg" alt="我的博客">
                     </a>
                     <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
-                        <img id="msg_icon" class="navbar-icon" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/message.svg" alt="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/message.svg" alt="短消息">
                         <span id="msg_count" style="display: none"></span>
                     </a>
                     <a id="navbar_lite_mode_indicator" data-current-page="blog" style="display: none" href="javascript:void(0)" alt="简洁模式" title="简洁模式启用，您在访问他人博客时会使用简洁款皮肤展示">
-                        <img class="navbar-icon" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/lite-mode-on.svg" alt="简洁模式">
+                        <img class="navbar-icon" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/lite-mode-on.svg" alt="简洁模式">
                     </a>
                     <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
                         <a class="dropdown-button" href="https://home.cnblogs.com/">
-                            <img id="user_icon" class="navbar-avatar" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/avatar-default.svg" alt="用户头像">
+                            <img id="user_icon" class="navbar-avatar" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/avatar-default.svg" alt="用户头像">
                         </a>
                         <div class="dropdown-menu">
                             <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
                             <a href="https://home.cnblogs.com/">我的园子</a>
                             <a href="https://account.cnblogs.com/settings/account">账号设置</a>
                             <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
-    简洁模式 <img id="navbar_lite_mode_on" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/lite-mode-check.svg" class="hide" style="display: none;"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+    简洁模式 <img id="navbar_lite_mode_on" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/lite-mode-check.svg" class="hide" style="display: none;"><span id="navbar_lite_mode_spinner" class="hide">...</span>
 </a>
                             <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
                         </div>
@@ -343,7 +343,7 @@
 <div id="home">
 <div id="header">
 	<div id="blogTitle">
-        <a id="lnkBlogLogo" href="https://www.cnblogs.com/itxiaoshen/"><img id="blogLogo" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/logo.gif" alt="返回主页"></a>		
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/itxiaoshen/"><img id="blogLogo" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/logo.gif" alt="返回主页"></a>
 		
 <!--done-->
 <h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/itxiaoshen">itxiaoshen博客</a>
@@ -413,7 +413,7 @@
             <div class="clear"></div>
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
-        <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/2442976-20220509005923979-1375955504.png" alt="微服务生态组件之Spring Cloud LoadBalancer详解和源码分析" class="desc_img">
+        <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/2442976-20220509005923979-1375955504.png" alt="微服务生态组件之Spring Cloud LoadBalancer详解和源码分析" class="desc_img">
         Spring Cloud LoadBalancer是Spring Cloud官方自己提供的客户端负载均衡器,抽象和实现，用来替代Ribbon.本篇从常见使用示例开始，一步步分析源码实现原理，最后还通过一个自定义负载均衡算法加深对源码的理解
     </div>
 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
@@ -511,11 +511,11 @@
 <pre class="highlighter-hljs" highlighted="true"><code class="language-yaml highlighter-hljs hljs"><span class="hljs-attr">server:</span>
   <span class="hljs-attr">port:</span> <span class="hljs-number">4080</span>
 </code></pre>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/938570a0b63b56671a862e8bda11577a.png" alt="image-20220505191143684" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/938570a0b63b56671a862e8bda11577a.png" alt="image-20220505191143684" loading="lazy" class="medium-zoom-image"></p>
 <p>查看nacos服务管理-服务列表里服务详情，可以看到3个健康的库存实例和1个订单微服务实例</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/33fa03d937354fe00bb0bb2f3dd5c805.png" alt="image-20220505182432182" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/33fa03d937354fe00bb0bb2f3dd5c805.png" alt="image-20220505182432182" loading="lazy" class="medium-zoom-image"></p>
 <p>访问6次订单dedect接口：<a href="http://localhost:4070/deductRest/1001/1" target="_blank" rel="noopener nofollow">http://localhost:4070/deductRest/1001/1</a> ，从测试的结果也验证了LoadBalancer默认是轮询负载均衡策略。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/1fc20b1d482d2a4e3924c5707ac2ff19.png" alt="image-20220505192217715" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/1fc20b1d482d2a4e3924c5707ac2ff19.png" alt="image-20220505192217715" loading="lazy" class="medium-zoom-image"></p>
 <h2 id="负载均衡算法切换">负载均衡算法切换<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
 <p>创建自定义负载均衡配置类CustomLoadBalancerConfiguration</p>
 <pre class="highlighter-hljs" highlighted="true" has-selection="true"><code class="language-java highlighter-hljs hljs"><span class="hljs-keyword">package</span> cn.itxs.ecom.order.config;
@@ -564,7 +564,7 @@
 <p>多次访问订单dedect接口测试确认已切换为随机负载均衡策略。</p>
 <h2 id="集成方式">集成方式<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
 <p>官网提供3中集成Spring Cloud LoadBalancer的方式，除了第一种上面已使用过，还支持Spring Web Flux响应式编程，WebClient是从Spring WebFlux 5.0版本开始提供的一个非阻塞的基于响应式编程的进行Http请求的客户端工具。它的响应式编程的基于Reactor的。WebClient中提供了标准Http请求方式对应的get、post、put、delete等方法，可以用来发起相应的请求。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/ad44f363342f540b1cb1805b20be6ef0.png" alt="image-20220506233248585" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/ad44f363342f540b1cb1805b20be6ef0.png" alt="image-20220506233248585" loading="lazy" class="medium-zoom-image"></p>
 <p>在订单微服务中引入spring-boot-starter-webflux依赖</p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs">        &lt;dependency&gt;
             &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
@@ -608,9 +608,9 @@
     }
 </code></pre>
 <p>重新启动订单微服务</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/ec48e022accfb3298069c96b7e3799e7.png" alt="image-20220506234934948" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/ec48e022accfb3298069c96b7e3799e7.png" alt="image-20220506234934948" loading="lazy" class="medium-zoom-image"></p>
 <p>访问订单控制器中的减库存WebClient接口，<a href="http://localhost:4070/deductWebClient/1001/1" target="_blank" rel="noopener nofollow">http://localhost:4070/deductWebClient/1001/1</a> ，结果返回成功</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/5f737fc9d8806dc072ce3e1fdf983de6.png" alt="image-20220506234627330" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/5f737fc9d8806dc072ce3e1fdf983de6.png" alt="image-20220506234627330" loading="lazy" class="medium-zoom-image"></p>
 <p>我们还可以配置基于过滤器的方式，通过WebClient使用ReactiveLoadBalancer。如果项目中添加了Spring Cloud LoadBalancer starter，并且Spring -webflux在类路径中，ReactorLoadBalancerExchangeFilterFunction则是自动配置的。</p>
 <p>订单微服务订单控制器中添加WebClient使用ReactiveLoadBalancer接口实现，代码如下</p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs">    <span class="hljs-meta">@Autowired</span>
@@ -630,15 +630,15 @@
     }
 </code></pre>
 <p>重新启动订单微服务</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/3546b9913f1253a1b23039ad6f7546d1.png" alt="image-20220507000930179" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/3546b9913f1253a1b23039ad6f7546d1.png" alt="image-20220507000930179" loading="lazy" class="medium-zoom-image"></p>
 <p>访问订单控制器中的减库存WebClient接口，<a href="http://localhost:4070/deductWebFluxReactor/1001/1" target="_blank" rel="noopener nofollow">http://localhost:4070/deductWebFluxReactor/1001/1</a> ，结果返回成功</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/0bc2b04d23d11bc85009c7e040900b2b.png" alt="image-20220507000746900" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/0bc2b04d23d11bc85009c7e040900b2b.png" alt="image-20220507000746900" loading="lazy" class="medium-zoom-image"></p>
 <p>关于LoadBalancer官网还提供很多其他功能，有兴趣可自行详细查阅和动手实验</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/1d8f35933945b317a2dd71627fdfa748.png" alt="image-20220507001132987" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/1d8f35933945b317a2dd71627fdfa748.png" alt="image-20220507001132987" loading="lazy" class="medium-zoom-image"></p>
 <h2 id="原理">原理<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
 <h3 id="resttemplate">RestTemplate<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>Spring Cloud LoadBalancer源码分析我们先从RestTemplate负载均衡的简单实现来分析入手，除此之外其支持Spring Web Flux响应式编程的实现原理思想也是相同，都是通过客户端添加拦截器，在拦截器中实现负载均衡。从RestTemplate的源码中可以知道其继承自InterceptingHttpAccessor抽象类</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/c3ee7af69f54aeed5f1026823779fee8.png" alt="image-20220508142236428" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/c3ee7af69f54aeed5f1026823779fee8.png" alt="image-20220508142236428" loading="lazy" class="medium-zoom-image"></p>
 <p>而InterceptingHttpAccessor抽象类则提供了一个方法setInterceptors，用于设置拦截器，拦截器需要实现ClientHttpRequestInterceptor接口即可，在实际远程请求服务端接口之前会先调用拦截器的intercept方法。这里的拦截器相当于Servlet技术中的Filter功能</p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs">	<span class="hljs-comment">// 代码实现在抽象父类InterceptingHttpAccessor里</span>
 	<span class="hljs-comment">// RestTemplate.InterceptingHttpAccessor#setInterceptors</span>
@@ -652,20 +652,20 @@
 		}
 	}
 </code></pre>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/5062f793bb2bd7f996eb944f77af7137.png" alt="image-20220508142443637" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/5062f793bb2bd7f996eb944f77af7137.png" alt="image-20220508142443637" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="loadbalancerautoconfiguration"><strong>LoadBalancerAutoConfiguration</strong><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>从官网可以知道Spring Cloud LoadBalancer放在spring-cloud-commons，因此也作为其核心的@LoadBalanced注解也就是由spring-cloud-commons来实现，依据SpringBoot自动装配的原理先查看依赖包的实现逻辑，不难发现spring-cloud-commons引入了自动配置类LoadBalancerAutoConfiguration和ReactorLoadBalancerClientAutoConfiguration。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/b5be12e0dd8d515aa07613738efab122.png" alt="image-20220509001530634" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/b5be12e0dd8d515aa07613738efab122.png" alt="image-20220509001530634" loading="lazy" class="medium-zoom-image"></p>
 <p>当满足上述的条件时（@Conditional为条件注解），将自动创建LoadBalancerInterceptor并注入到RestTemplate中。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/676f6d81529228511c862c780b0c4532.png" alt="image-20220508143752218" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/676f6d81529228511c862c780b0c4532.png" alt="image-20220508143752218" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="loadbalancerlnterceptor"><strong>LoadBalancerLnterceptor</strong><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>LoadBalancerInterceptor实现了ClientHttpRequestInterceptor接口，因此也实现intercept方法，用于实现负载均衡的拦截处理。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/bb587d8122fee4973eba2fc00ed1af3f.png" alt="image-20220508144048248" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/bb587d8122fee4973eba2fc00ed1af3f.png" alt="image-20220508144048248" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="loadbalancerclient"><strong>LoadBalancerClient</strong><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>LoadBalancerClient用于进行负载均衡逻辑，继承自ServiceInstanceChooser接口，从服务列表中选择出一个服务地址进行调用。在LoadBalancerClient种存在两个execute()方法，均是用来执行请求的，reconstructURI()是用来重构URL。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/a3590c0ab24cb5ee04cf1cf513724fc0.png" alt="image-20220508144435104" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/a3590c0ab24cb5ee04cf1cf513724fc0.png" alt="image-20220508144435104" loading="lazy" class="medium-zoom-image"></p>
 <p>对于LoadBalancerClient接口Spring Cloud LoadBalancer的提供默认实现为BlockingLoadBalancerClient</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/256e4815a982966d7d6bfb82e0e97f67.png" alt="image-20220508144750601" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/256e4815a982966d7d6bfb82e0e97f67.png" alt="image-20220508144750601" loading="lazy" class="medium-zoom-image"></p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs"><span class="hljs-meta">@SuppressWarnings({ "unchecked", "rawtypes" })</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BlockingLoadBalancerClient</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">LoadBalancerClient</span> {
 
@@ -788,12 +788,12 @@
 </code></pre>
 <h3 id="loadbalancerclientfactory"><strong>LoadBalancerClientFactory</strong><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>BlockingLoadBalancerClient中持有LoadBalancerClientFactory通过调用其getInstance方法获取具体的负载均衡客户端。通过工厂类LoadBalancerClientFactory获取具体的负载均衡器实例，后面的loadBalancer.choose(request)调用其接口choose()方法实现根据负载均衡算法选择下一个服务器完成负载均衡，而ReactiveLoadBalancer<t> getInstance(String serviceId) 有默认实现LoadBalancerClientFactory<br>
-<img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/4014445b0c2ea7189a232b5d257fb938.png" alt="image-20220508190132565" loading="lazy" class="medium-zoom-image"></t></p>
+<img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/4014445b0c2ea7189a232b5d257fb938.png" alt="image-20220508190132565" loading="lazy" class="medium-zoom-image"></t></p>
 <p>LoadBalancerClientFactory客户端实现了不同的负载均衡算法，比如轮询、随机等。LoadBalancerClientFactory继承自NamedContextFactory，NamedContextFactory继承ApplicationContextAware，实现Spring ApplicationContext容器操作。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/18f62338fdb636327fcdb2d08d33661b.png" alt="image-20220508190412076" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/18f62338fdb636327fcdb2d08d33661b.png" alt="image-20220508190412076" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="reactiveloadbalancer">ReactiveLoadBalancer<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>ReactiveLoadBalancer负载均衡器实现服务选择，Spring Cloud Balancer中实现了轮询RoundRobinLoadBalancer、随机RandomLoadBalancer、NacosLoadBalancer算法。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/f19b9fd0d246dbae37b05e67b1a79805.png" alt="image-20220508235128931" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/f19b9fd0d246dbae37b05e67b1a79805.png" alt="image-20220508235128931" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="loadbalancerclientconfiguration">LoadBalancerClientConfiguration<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>如果没有显式指定负载均衡算法，默认缺省值为RoundRobinLoadBalancer</p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs">	<span class="hljs-meta">@Bean</span>
@@ -805,14 +805,14 @@
 				loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class), name);
 	}
 </code></pre>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/c8ae46d4cedb33f40939edb4f6fde542.png" alt="image-20220508235645313" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/c8ae46d4cedb33f40939edb4f6fde542.png" alt="image-20220508235645313" loading="lazy" class="medium-zoom-image"></p>
 <h3 id="loadbalancerrequestfactory"><strong>LoadBalancerRequestFactory</strong><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>LoadBalancerRequest工厂类调用createRequest方法用于创建LoadBalancerRequest。其内部持有LoadBalancerClient对象也即持有BlockingLoadBalancerClient。</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/c928dcb312df87a44c33ee77a296ee84.png" alt="image-20220509000049541" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/c928dcb312df87a44c33ee77a296ee84.png" alt="image-20220509000049541" loading="lazy" class="medium-zoom-image"></p>
 <p>在日常项目中，一般负载均衡都是结合Feign使用，后续我们有时间再来分析Feign整合LoadBalancer的自动配置类FeignLoadBalancerAutoConfiguration的实现</p>
 <h3 id="reactorloadbalancerclientautoconfiguration">ReactorLoadBalancerClientAutoConfiguration<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
 <p>我们也抛一下基于WebClient的@Loadbalanced的流程的引入，首先声明负载均衡过滤器ReactorLoadBalancerClientAutoConfiguration是一个自动装配器类，在项目中引入了 WebClient 和 ReactiveLoadBalancer 类之后，自动装配流程就开始运行，它会初始化一个实现了 ExchangeFilterFunction 的实例，在后面该实例将作为过滤器被注入到WebClient。后续流程有兴趣再自行研究</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/869a4ea9a6e1409b84c927db08cebea1.png" alt="image-20220509001650781" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/869a4ea9a6e1409b84c927db08cebea1.png" alt="image-20220509001650781" loading="lazy" class="medium-zoom-image"></p>
 <h2 id="自定义负载均衡器">自定义负载均衡器<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
 <p>从上面可以知道LoadBalancerClientFactory是创建客户机、负载均衡器和客户机配置实例的工厂。它根据客户端名称创建一个Spring ApplicationContext，并从中提取所需的bean。因此进入到LoadBalancerClientFactory类中，需要去实现它的子接口ReactorServiceInstanceLoadBalancer，因为去获取负载均衡器实例的时候，是通过去容器中查找ReactorServiceInstanceLoadBalancer类型的bean来实现的，可以参照RandomLoadBalancer实现代码</p>
 <pre class="highlighter-hljs" highlighted="true"><code class="language-java highlighter-hljs hljs"><span class="hljs-keyword">package</span> org.springframework.cloud.loadbalancer.core;
@@ -952,8 +952,8 @@
 }
 </code></pre>
 <p>启动库存微服务和订单微服务，访问http://localhost:4070/deductRest/1001/1 ，控制台已打印自定义ItxsRandomLoadBalancerClient中的日志和成功访问结果</p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/c72e3f02f7e0d5d3343f8ae9c464b69c.png" alt="image-20220509003807968" loading="lazy" class="medium-zoom-image"></p>
-<p><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/59796bbbd6b3524e32759d42b622f1bc.png" alt="image-20220509003927550" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/c72e3f02f7e0d5d3343f8ae9c464b69c.png" alt="image-20220509003807968" loading="lazy" class="medium-zoom-image"></p>
+<p><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/59796bbbd6b3524e32759d42b622f1bc.png" alt="image-20220509003927550" loading="lazy" class="medium-zoom-image"></p>
 <p>**本人博客网站 **<a href="http://www.itxiaoshen.com/" target="_blank" rel="noopener nofollow"><strong>IT小神</strong></a>   www.itxiaoshen.com</p>
 
 </div>
@@ -977,7 +977,7 @@
 </div>
 <div id="author_profile">
     <div id="author_profile_info" class="author_profile_info">
-            <a href="https://home.cnblogs.com/u/itxiaoshen/" target="_blank"><img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/20210811230858.png" class="author_avatar" alt=""></a>
+            <a href="https://home.cnblogs.com/u/itxiaoshen/" target="_blank"><img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/20210811230858.png" class="author_avatar" alt=""></a>
         <div id="author_profile_detail" class="author_profile_info">
             <a href="https://home.cnblogs.com/u/itxiaoshen/">itxiaoshen</a>
             <br>
@@ -1059,7 +1059,7 @@
     <div id="opt_under_post"></div>
         <div id="blog_c1" class="under-post-card">
             <a href="https://www.doubao.com/?channel=cnblogs&amp;source=hw_db_cnblogs" rel="nofollow" target="_blank" onclick="countCreativeClicks(&#39;C1-字节-豆包&#39;)">
-                <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/35695-20241201072501456-2052907165.jpg" onload="countCreativeImpressions(&#39;C1-字节-豆包&#39;)" alt="">
+                <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/35695-20241201072501456-2052907165.jpg" onload="countCreativeImpressions(&#39;C1-字节-豆包&#39;)" alt="">
                 <span id="c1_impression" style="display:none"></span>
             </a>
         </div>
@@ -1779,21 +1779,21 @@ Copyright © 2025 itxiaoshen
     
 
     <input type="hidden" id="antiforgery_token" value="CfDJ8DfB03_iObVLoqH7ndAeeDiKm9CruDoTsN6jVL2kMDiqkFS6pPHqgTsX2g7TOMmQ0ouZY_5hL326mIcXMOkFILMSYUawbGzEVupvuMdmJImj_sZcH-4rIXtgkziO4p9M-9bHR858xcOox0lly02Zapo">
-    <script async="" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/js"></script>
+    <script async="" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/js"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-M95P3TTWJZ');
 </script>
-<script defer="" src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/hm.js"></script>
+<script defer="" src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/hm.js"></script>
 
 
 <div style="z-index: 998; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; flex-direction: column; align-items: center; justify-content: center">
 <div style="background: #fff;padding: 30px; margin: 30px; border-radius: 16px;">
   <div style="width: 200px; height: 200px; background: rgba(255, 255, 255, 0.8); position: absolute; top: -100px; right: -100px; border-radius: 100px"></div>
   <div style="text-align: center; font-size: 18px; margin-bottom: 10px;">点击右上角即可分享</div>
-  <img src="./微服务生态组件之Spring Cloud LoadBalancer详解和源码分析 - itxiaoshen - 博客园_files/35695-20230906145857937-1471873834.gif" alt="微信分享提示">
+  <img src="微服务生态组件之Spring%20Cloud%20LoadBalancer详解和源码分析%20-%20itxiaoshen%20-%20博客园_files/35695-20230906145857937-1471873834.gif" alt="微信分享提示">
 </div>   
     </div><button class="charm-bar-item charm-bar-handle hidden" type="button" title="显示工具栏"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="logo">
   <style>

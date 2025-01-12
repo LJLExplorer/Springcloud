@@ -1,0 +1,83 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+            # 自定义的过滤器如 HAHAGatewayFilterFactory 去掉 GatewayFilterFactory
+            - HAHA=name
+            - HAHA=age
+
+            # name必须写 RequestRateLimiter
+            - name: RequestRateLimiter
+              args:
+                # key-resolver：决定限流的依据。
+                key-resolver: "#{@ipKeyResolver}" # 引用自定义限流键生成器
+                # replenishRate 令牌生成速率（每秒） 每秒钟生成replenishRate个令牌，桶满了不放了
+                # burstCapacity：令牌桶的最大容量(在刚启动的1s时候令牌桶是空，所以请求还是会被拒绝),
+                # 同时突发情况下每秒钟最大可以允许每个ip请求burstCapacity次。
+                # 如果桶满了就不生成令牌了
+                redis-rate-limiter:
+                  replenishRate: 1
+                  burstCapacity: 2
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+      # 默认过滤器 对所有路由都生效
+      default-filters:
+        - AddResponseHeader=myName, ljl
+      # globalcors 用于配置全局的 CORS（跨域资源共享）设置。
+      globalcors:
+        # corsConfigurations: 定义 CORS 配置的路径模式
+        cors-configurations:
+          # 匹配所有路径。
+          '[/**]':
+            # 允许的源，* 表示允许所有源。
+            allowed-origins: "*"
+            allowed-methods:
+              # 允许来自上面网址的所有GET方法跨域
+              - get
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: test
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      timeout: 3s
+      connect-timeout: 3s
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+    io.github.resilience4j: debug

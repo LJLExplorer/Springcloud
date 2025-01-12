@@ -26,7 +26,8 @@
 		<module>consumer</module>
 		<module>eureka-server</module>
 		<module>root-service</module>
-	</modules>
+        <module>gateway</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
@@ -44,11 +45,6 @@
 			<version>${spring-cloud.version}</version>
 			<type>pom</type>
 			<scope>import</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>

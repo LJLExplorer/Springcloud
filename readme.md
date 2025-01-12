@@ -6,9 +6,7 @@ Spingboot3.2.12版本，对应springCloud2023.0.4，
 
 springboot与springcloud版本对应：https://spring.io/projects/spring-cloud#overview
 
-Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7版本与eureka server冲突，无法启动
-
-![image-20250101203911539](./image/image-20250101203911539.png)
+Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7版本与eureka server冲突，无法启动![image-20250101203911539](src/main/resources/image/image-20250101203911539.png)
 
 ## Eureka注册与发现
 
@@ -59,11 +57,6 @@ Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7
 			<version>${spring-cloud.version}</version>
 			<type>pom</type>
 			<scope>import</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -150,6 +143,10 @@ Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+				</dependency>
     </dependencies>
 </project>
 ```
@@ -210,6 +207,10 @@ logging:
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+				</dependency>
     </dependencies>
 
 </project>
@@ -577,7 +578,7 @@ eureka:
 
 我们关停一个服务，就会在Eureka面板看到一条警告：
 
-![Snipaste_2025-01-05_19-10-47](./image/Snipaste_2025-01-05_19-10-47.png)
+![Snipaste_2025-01-05_19-10-47](src/main/resources/image/Snipaste_2025-01-05_19-10-47.png)
 
 这是触发了Eureka的自我保护机制。当一个服务未按时进行心跳续约时，Eureka会统计最近15分钟心跳
 
@@ -719,7 +720,7 @@ Hystrix也被弃用，推荐使用**Resilience4j**
         </dependency>
 ```
 
-总的pom
+#####  consumer总的pom
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -754,6 +755,10 @@ Hystrix也被弃用，推荐使用**Resilience4j**
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+				</dependency>
         <!-- Resilience4j Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -1373,6 +1378,592 @@ public interface UserClient {
     //http://user-service/user/123
     @GetMapping("/user/{id}")
     String queryById(@PathVariable("id") Long id);
+}
+```
+
+## Spring Cloud Gateway网关
+
+### Gateway与Fegin的区别
+
+Gateway 作为整个应用的流量入口，接收所有的请求，如PC、移动端等，并且将不同的请求转- 发至不同的处理微服务模块，其作用可视为nginx；大部分情况下用作权限鉴定、服务端流量控制
+
+Feign 则是将当前微服务的部分服务接口暴露出来，并且主要用于各个微服务之间的服务调用
+
+### Gateway配置
+
+###### pom
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ljl</groupId>
+        <artifactId>springcloud</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gateway</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+```
+
+###### GatewayApplication
+
+```
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@EnableDiscoveryClient
+@SpringBootApplication
+public class GatewayApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class, args);
+    }
+}
+```
+
+###### application.yml
+
+```
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+```
+
+### 过滤器
+
+Gateway作为网关的其中一个重要功能，就是实现请求的鉴权。而这个动作往往是通过网关提供的过滤器来实现的。前面的 路由前缀 章节中的功能也是使用过滤器实现的。
+
+![image-20250111170912069](src/main/resources/image/Snipaste_2025-01-11_17-13-06.png)
+
+###### application.yml
+
+```
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+          
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+```
+
+#### 配置全局过滤器码 (仅能实现添加头 移除头等简单逻辑 复杂逻辑如动态路由、鉴权需要实现 GlobalFilter 接口）
+
+###### application.yml
+
+```
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+      # 默认过滤器 对所有路由都生效
+      default-filters:
+        - AddResponseHeader=myName, ljl
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+```
+
+##### default-filters和GlobalFilter区别和使用场景
+
+|     特性     |             default-filters              |               GlobalFilter               |
+| :----------: | :--------------------------------------: | :--------------------------------------: |
+|   配置方式   |       声明式（YAML/Properties 配置       |           编程式（Java 实现）            |
+|   能力范围   |   限于 Spring Cloud Gateway 内置过滤器   |            支持自定义复杂逻辑            |
+|   可扩展性   |               不支持自定义               |        支持依赖注入和复杂逻辑处理        |
+|    灵活性    |                   较低                   |                    高                    |
+| 作用范围控制 |            默认作用于所有路由            |           可以动态控制作用范围           |
+|   使用场景   | 简单的全局过滤需求（如添加头、移除头等） | 复杂的全局过滤需求（如动态路由、鉴权等） |
+
+#### 自定义过滤器
+
+在过滤器（MyParamGatewayFilterFactory）中将http://localhost:10010/api/user/8?name=yemage中的参数name的值获取到并输出到控制台；并且参数名是可变的，也就是不一定每次都是name；需要可以通过配置过滤器的时候做到配置参数名。
+
+###### Application.yml
+
+``` application.yml
+port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+            # 自定义的过滤器如 HAHAGatewayFilterFactory 去掉 GatewayFilterFactory
+            - HAHA=name
+            - HAHA=age
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+      # 默认过滤器 对所有路由都生效
+      default-filters:
+        - AddResponseHeader=myName, ljl
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+```
+
+###### HAHAGatewayFilterFactory
+
+``` package com.ljl.filter;
+import lombok.*;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Component
+public class HAHAGatewayFilterFactory extends AbstractGatewayFilterFactory<HAHAGatewayFilterFactory.Config> {
+
+    static final String PARAM_NAME = "param";
+
+    public HAHAGatewayFilterFactory() {
+        super(Config.class);
+    }
+
+    public List<String> shortcutFieldOrder() {
+
+        return List.of(PARAM_NAME);
+    }
+
+    //    过滤器（MyParamGatewayFilterFactory）中将http://localhost:10010/api/user/8?name=yemage
+    //    中的参数name的值获取到并输出到控制台；并且参数名是可变的，也就是不一定每次都是name；需要可以通过配置过滤器的时候做到配置参数名。
+    @Override
+    public GatewayFilter apply(Config config) {
+        // 非lambda写法
+        return new GatewayFilter() {
+            @Override
+            public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+                // 拉取请求
+                ServerHttpRequest request = exchange.getRequest();
+                // 检查参数中是否包含 config.name
+                if (request.getQueryParams().containsKey(config.param)) {
+                    // 遍历参数的值并打印
+                    request.getQueryParams().get(config.param).forEach(value -> {
+                        System.out.printf("局部过滤器: 参数 %s = %s%n", config.param, value);
+                    });
+                }
+                // 将请求传递给下一个过滤器
+                return chain.filter(exchange);
+            }
+        };
+
+        // lambda写法
+//        return ((exchange, chain) -> {
+//            // http://localhost:10010/api/user/8?name=yemage config.param ==> name
+//            //获取请求参数中param对应的参数名 的参数值
+//            ServerHttpRequest request = exchange.getRequest();
+//            if (request.getQueryParams().containsKey(config.param)) {
+//                // 遍历参数的值并打印
+//                request.getQueryParams().get(config.param).forEach(value -> {
+//                    System.out.printf("局部过滤器: 参数 %s = %s%n", config.param, value);
+//                });
+//            }
+//            return chain.filter(exchange);
+//        });
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Config {
+        //对应在配置过滤器的时候指定的参数名
+        private String param;
+    }
+}
+```
+
+#### 自定义全局过滤器
+
+编写全局过滤器，在过滤器中检查请求中是否携带token请求头。如果token请求头存在则放行；如果token为空或者不存在则设置返回的状态码为：未授权也不再执行下去。
+
+###### MyGlobalFilter
+
+``` package com.ljl.filter;
+import io.micrometer.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Component
+public class MyGlobalFilter implements GlobalFilter, Ordered {
+
+    private final static Logger logger = LoggerFactory.getLogger(MyGlobalFilter.class);
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        logger.info("--------------全局过滤器MyGlobalFilter------------------");
+        String token = exchange.getRequest().getHeaders().getFirst("token");
+        if (StringUtils.isBlank(token)) {
+            //设置响应状态码为未授权
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+        return chain.filter(exchange);
+    }
+
+    @Override
+    public int getOrder() {
+        // 值越小执行优先级越高
+        return 1;
+    }
+}
+```
+
+#### 跨域配置
+
+###### application.yml
+
+``` 
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+            # 自定义的过滤器如 HAHAGatewayFilterFactory 去掉 GatewayFilterFactory
+            - HAHA=name
+            - HAHA=age
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+      # 默认过滤器 对所有路由都生效
+      default-filters:
+        - AddResponseHeader=myName, ljl
+      # globalcors 用于配置全局的 CORS（跨域资源共享）设置。
+      globalcors:
+        # corsConfigurations: 定义 CORS 配置的路径模式
+        cors-configurations:
+          # 匹配所有路径。
+          '[/**]':
+            allowed-origins:
+              # 允许的源，* 表示允许所有源。
+              *
+            allowed-methods:
+              # 允许来自上面网址的所有GET方法跨域
+              - get
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+```
+
+#### gateway针对特定ip进行限流
+
+需要配合redis进行限流
+
+###### pom
+
+```
+  <!-- Redis 支持 -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+  </dependency>
+```
+
+###### Application.yml
+
+``` 
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 路由id，可以随意写
+        - id: consumer-service-route
+          # 代理的服务地址
+          uri:
+            lb://consumer
+          # http://127.0.0.1:8080
+          # 路由断言，可以配置映射路径
+          predicates:
+            # - Path=/cf/**
+            # - Path=/**
+            - Path=/api/cf/**
+          filters:
+            # 添加请求路径的前缀
+            # - PrefixPath=/cf
+            # 表示过滤1个路径，2表示两个路径，以此类推
+            - StripPrefix=1
+            # 自定义的过滤器如 HAHAGatewayFilterFactory 去掉 GatewayFilterFactory
+            - HAHA=name
+            - HAHA=age
+
+            # name必须写 RequestRateLimiter
+            - name: RequestRateLimiter
+              args:
+                # key-resolver：决定限流的依据。
+                key-resolver: "#{@ipKeyResolver}" # 引用自定义限流键生成器
+                # replenishRate 令牌生成速率（每秒） 每秒钟生成replenishRate个令牌，桶满了不放了
+                # burstCapacity：令牌桶的最大容量(在刚启动的1s时候令牌桶是空，所以请求还是会被拒绝),
+                # 同时突发情况下每秒钟最大可以允许每个ip请求burstCapacity次。
+                # 如果桶满了就不生成令牌了
+                redis-rate-limiter:
+                  replenishRate: 1
+                  burstCapacity: 2
+        # 第二个路由规则：访问/cf/**不做任何处理
+        - id: cf-direct-route
+          uri:
+            lb://consumer
+          predicates:
+            - Path=/cf/**
+      # 默认过滤器 对所有路由都生效
+      default-filters:
+        - AddResponseHeader=myName, ljl
+      # globalcors 用于配置全局的 CORS（跨域资源共享）设置。
+      globalcors:
+        # corsConfigurations: 定义 CORS 配置的路径模式
+        cors-configurations:
+          # 匹配所有路径。
+          '[/**]':
+            # 允许的源，* 表示允许所有源。
+            allowed-origins: "*"
+            allowed-methods:
+              # 允许来自上面网址的所有GET方法跨域
+              - get
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: test
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      timeout: 3s
+      connect-timeout: 3s
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+    io.github.resilience4j: debug
+```
+
+###### RateLimiterConfig
+
+```
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+
+/**
+ * 自定义根据ip进行限流
+ */
+@Configuration
+public class RateLimiterConfig {
+
+    private final static Logger logger = LoggerFactory.getLogger(RateLimiterConfig.class);
+
+    @Bean(name = "ipKeyResolver")
+    public KeyResolver ipKeyResolver() {
+        return exchange -> Mono.just(getClientIp(exchange));
+    }
+
+    private String getClientIp(ServerWebExchange exchange) {
+        String forwardedHeader = exchange.getRequest().getHeaders().getFirst("X-Forwarded-For");
+        logger.debug("forwardedHeader: " + forwardedHeader);
+        if (forwardedHeader != null) {
+            return forwardedHeader.split(",")[0];
+        }
+        return Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress();
+    }
 }
 ```
 
