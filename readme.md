@@ -1,14 +1,14 @@
+# Springboot3+Springcloud2023.0.5+Springcloud alibaba2023.0.3.2学习及踩坑记录
 
-
-# Springboot3+Springcloud2023.0.4学习及踩坑记录
-
-Spingboot3.2.12版本，对应springCloud2023.0.4，
+Spingboot3.2.12版本，对应springCloud2023.0.5，
 
 springboot与springcloud版本对应：https://spring.io/projects/spring-cloud#overview
 
+springcloud与springcloud alibaba版本对应：https://sca.aliyun.com/docs/2023/overview/version-explain/?spm=5176.29160081.0.0.74805c72TiOFH3
+
 Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7版本与eureka server冲突，无法启动![image-20250101203911539](src/main/resources/image/image-20250101203911539.png)
 
-## Eureka注册与发现
+## Eureka注册与发现(现在常用的是Nacos,Eureka 2版本已经不在维护，后续会将注册中心换为Nacos)
 
 假设有三个服务，Eureka注册中心，生产者（用户服务）、消费者
 
@@ -48,16 +48,9 @@ Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7
 	</scm>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2023.0.4</spring-cloud.version>
+		<spring-cloud.version>2023.0.5</spring-cloud.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>${spring-cloud.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -71,6 +64,10 @@ Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+    </dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -101,9 +98,7 @@ Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
-
 ```
 
 
@@ -280,7 +275,6 @@ public class ConsumerController {
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -1422,6 +1416,10 @@ Feign 则是将当前微服务的部分服务接口暴露出来，并且主要�
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
     </dependencies>
 </project>
 ```
@@ -1965,5 +1963,172 @@ public class RateLimiterConfig {
         return Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress();
     }
 }
+```
+
+## Nacos
+
+常用的是nacos，nacos=注册中心+配置中心的组合 -> Nacos = Eureka + Config + Bus
+
+nacos是springcloud alibaba的组件，所以需要在总的pom文件中加入springcloud alibaba组件
+
+###### 父pom文件
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.12</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.ljl</groupId>
+    <artifactId>springcloud</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>springcloud</name>
+    <description>Demo project for Spring Boot</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <modules>
+        <module>user-service</module>
+        <module>consumer</module>
+        <module>eureka-server</module>
+        <module>root-service</module>
+        <module>gateway</module>
+    </modules>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <java.version>17</java.version>
+        <spring-cloud.version>2023.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>aliyunmaven</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+        <repository>
+            <id>spring-cloud-alibaba</id>
+            <url>https://maven.aliyun.com/repository/spring-cloud-alibaba</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+            <!--			<optional>true</optional>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <!--			<plugin>-->
+            <!--				<groupId>org.apache.maven.plugins</groupId>-->
+            <!--				<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--				<configuration>-->
+            <!--					<annotationProcessorPaths>-->
+            <!--						<path>-->
+            <!--							<groupId>org.projectlombok</groupId>-->
+            <!--							<artifactId>lombok</artifactId>-->
+            <!--							<version>1.18.30</version>-->
+            <!--						</path>-->
+            <!--					</annotationProcessorPaths>-->
+            <!--					<source>17</source>-->
+            <!--					<target>17</target>-->
+            <!--				</configuration>-->
+            <!--			</plugin>-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+###### 子pom文件，注册和发现的服务
+
+```
+  <!-- nacos服务的注册发现 -->
+  <dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+  </dependency>
+```
+
+将有关eureka的东西注释掉，配置文件加上就行，nacos没有loadbalancer，需要加上依赖否则发现不了服务
+
+```
+spring:  
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: localhost:8848
+```
+
+###### 配置中心(Todo)
+
+```
+        <!-- nacos配置中心做依赖管理 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
 ```
 

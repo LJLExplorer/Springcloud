@@ -58,7 +58,6 @@ public class ConsumerController {
     public User fallback(Long id, Throwable t) {
         logger.error("服务不可用，进入回退方法: {}", t.getMessage());
         User user = new User();
-        user.setId(id);
         if( t instanceof RequestNotPermitted)
             user.setName("请求过于频繁，请稍后再试。");
         else

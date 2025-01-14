@@ -46,13 +46,13 @@ public class ConsumerFeignController {
     public String fallback(Long id, Throwable t) {
         logger.error("服务不可用，进入回退方法: {}", t.getMessage());
         Map<String, Object> map = new HashMap<>();
-        map.put(CODE, 500);
-
         if (t instanceof RequestNotPermitted){
+            map.put(CODE, 429);
             logger.error( "请求过于频繁，请稍后再试。");
             map.put(MESSAGE, "请求过于频繁，请稍后再试。");
         }
         else{
+            map.put(CODE, 500);
             map.put(MESSAGE, "服务暂时不可用，请稍后再试。");
             logger.error("服务暂时不可用，请稍后再试。");
         }

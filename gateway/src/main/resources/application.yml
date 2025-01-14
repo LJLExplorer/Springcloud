@@ -4,14 +4,19 @@ spring:
   application:
     name: api-gateway
   cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: localhost:8848
     gateway:
       routes:
         # 路由id，可以随意写
         - id: consumer-service-route
           # 代理的服务地址
           uri:
-            lb://consumer
-          # http://127.0.0.1:8080
+            lb://consumer-service
+            #http://127.0.0.1:8080
           # 路由断言，可以配置映射路径
           predicates:
             # - Path=/cf/**
@@ -37,11 +42,11 @@ spring:
                 # 如果桶满了就不生成令牌了
                 redis-rate-limiter:
                   replenishRate: 1
-                  burstCapacity: 2
+                  burstCapacity: 1
         # 第二个路由规则：访问/cf/**不做任何处理
         - id: cf-direct-route
           uri:
-            lb://consumer
+            lb://consumer-service
           predicates:
             - Path=/cf/**
       # 默认过滤器 对所有路由都生效
@@ -70,14 +75,15 @@ spring:
           min-idle: 0
       timeout: 3s
       connect-timeout: 3s
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
-    register-with-eureka: true
-  instance:
-    prefer-ip-address: true
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka
+#    register-with-eureka: true
+#  instance:
+#    prefer-ip-address: true
 logging:
   level:
     org.springframework.cloud.gateway: debug
     io.github.resilience4j: debug
+    org.springframework.cloud.loadbalancer: trace

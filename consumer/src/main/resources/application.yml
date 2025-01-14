@@ -1,6 +1,6 @@
 spring:
   application:
-    name: consumer
+    name: consumer-service
   cloud:
     loadbalancer:
       enabled: true
@@ -26,12 +26,19 @@ spring:
           mime-types: text/xml,application/xml,application/json #触发压缩数据类型
         response: #响应也开启压缩功能
           enabled: true
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
-    # 每隔30秒 会重新拉取并更新数据,为了得到服务最新状态
-    registry-fetch-interval-seconds: 30
+    nacos:
+      # 服务注册
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: localhost:8848
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka
+#    # 每隔30秒 会重新拉取并更新数据,为了得到服务最新状态
+#    registry-fetch-interval-seconds: 30
 resilience4j:
   # 熔断器
   circuitbreaker:
@@ -70,7 +77,7 @@ resilience4j:
         base-config: default
     configs:
       default:
-        limitForPeriod: 100                 # 每个周期允许的最大请求数
+        limitForPeriod: 5                # 每个周期允许的最大请求数
         limitRefreshPeriod: 1s            # 限流刷新周期
         timeoutDuration: 500ms            # 超过限流等待的最大时间
   # 重试
@@ -93,4 +100,5 @@ logging:
     org.springframework.web.client: DEBUG
     com.ljl.consumer: DEBUG
     org.springframework.cloud.circuitbreaker: DEBUG
+
 

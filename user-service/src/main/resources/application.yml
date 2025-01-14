@@ -4,6 +4,12 @@ spring:
   application:
     # 注册的服务id
     name: user-service
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: localhost:8848
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
@@ -17,18 +23,18 @@ spring:
 mybatis:
   type-aliases-package: com.ljl.user.domain
   mapper-locations: classpath:mapper/*.xml
-eureka:
-  client:
-    service-url:
-      defaultZone: HTTP://127.0.0.1:10086/eureka
-    register-with-eureka: true
-  instance:
-    ip-address: 127.0.0.1
-    prefer-ip-address: true
-    # 续约时间 心跳
-    lease-renewal-interval-in-seconds: 30
-    # 失效时间
-    lease-expiration-duration-in-seconds: 90
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: HTTP://127.0.0.1:10086/eureka
+#    register-with-eureka: true
+#  instance:
+#    ip-address: 127.0.0.1
+#    prefer-ip-address: true
+#    # 续约时间 心跳
+#    lease-renewal-interval-in-seconds: 30
+#    # 失效时间
+#    lease-expiration-duration-in-seconds: 90
 logging:
   level:
     com: info
