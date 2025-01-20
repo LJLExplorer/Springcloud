@@ -10,6 +10,9 @@ spring:
         username: nacos
         password: nacos
         server-addr: localhost:8848
+        # 区分开发 测试 发行组方便测试
+        group: dev_group
+        namespace: 743cb407-170d-4c67-8d26-044ace52c462
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root

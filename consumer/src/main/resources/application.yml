@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: consumer-service
   cloud:
     loadbalancer:
       enabled: true
@@ -26,13 +24,6 @@ spring:
           mime-types: text/xml,application/xml,application/json #触发压缩数据类型
         response: #响应也开启压缩功能
           enabled: true
-    nacos:
-      # 服务注册
-      discovery:
-        username: nacos
-        password: nacos
-        server-addr: localhost:8848
-
 #eureka:
 #  client:
 #    service-url:

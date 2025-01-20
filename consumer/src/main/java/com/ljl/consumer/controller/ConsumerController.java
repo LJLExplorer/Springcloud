@@ -1,7 +1,7 @@
 package com.ljl.consumer.controller;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ljl.consumer.domain.dto.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -11,6 +11,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import static com.ljl.consumer.utils.constant.LimterConstant.*;
 
 @Slf4j
 @RestController
+@RefreshScope
 @RequestMapping("/consumer")
 public class ConsumerController {
 
@@ -29,6 +32,12 @@ public class ConsumerController {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Value(value = "${product.name}")
+    private String productName;
+
+//    @Value("${product}")
+//    private String price;
 
     @GetMapping("/user/{id}")
     // @CircuitBreaker：应用断路器，指定断路器名称和回退方法。
@@ -63,5 +72,10 @@ public class ConsumerController {
         else
             user.setName("服务暂时不可用，请稍后再试。");
         return user;
+    }
+
+    @GetMapping("/get")
+    public String getProduct(){
+        return "商品名和价格是" + productName ;
     }
 }

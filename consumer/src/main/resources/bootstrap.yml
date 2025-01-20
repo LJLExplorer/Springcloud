@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: consumer-service
+  # 指定开发环境
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      username: 'nacos'
+      password: 'nacos'
+      discovery:
+        namespace: 743cb407-170d-4c67-8d26-044ace52c462
+        # 区分开发 测试 发行组方便测试（dev、test、prod）
+        group: dev_group
+      config:
+        refresh-enabled: true
+        namespace: 743cb407-170d-4c67-8d26-044ace52c462
+        # 随便取，对应每行的group就行 非命名空间
+        group: my_group
+        file-extension: yaml
+  config:
+    import:
+      - nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}?refreshEnabled=true
+logging:
+  level:
+    com.alibaba.nacos: DEBUG

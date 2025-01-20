@@ -3,6 +3,7 @@ package com.ljl.consumer;
 import com.ljl.consumer.config.CustomLoadBalancerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
         @LoadBalancerClient(value = "user-service", configuration = CustomLoadBalancerConfiguration.class),
         @LoadBalancerClient(value = "root-service", configuration = CustomLoadBalancerConfiguration.class)
 })
+@EnableConfigurationProperties
 public class ConsumerApplication {
 
     @Bean

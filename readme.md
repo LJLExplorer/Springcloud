@@ -4,7 +4,9 @@ Spingboot3.2.12版本，对应springCloud2023.0.5，
 
 springboot与springcloud版本对应：https://spring.io/projects/spring-cloud#overview
 
-springcloud与springcloud alibaba版本对应：https://sca.aliyun.com/docs/2023/overview/version-explain/?spm=5176.29160081.0.0.74805c72TiOFH3
+springcloud与springcloud alibaba版本对应：https://sca.aliyun.com/docs/2023/overview/version-explain/?spm=5238cd80.596123a.0.0.38965fc6Ffa0gd
+
+nacos版本2.4.3 配置文件改了，否则读取不到（Issues链接）：https://github.com/alibaba/nacos/issues/12908
 
 Spingboot3.4.1版本与idea中的gradle插件冲突无法启动，Spingboot3.3.7版本与eureka server冲突，无法启动![image-20250101203911539](src/main/resources/image/image-20250101203911539.png)
 
@@ -2112,6 +2114,8 @@ nacos是springcloud alibaba的组件，所以需要在总的pom文件中加入sp
 
 将有关eureka的东西注释掉，配置文件加上就行，nacos没有loadbalancer，需要加上依赖否则发现不了服务
 
+group需要自己去nacos建 namespace在建完之后生成一个自己复制过来配置，不同namespace之间服务发现不了
+
 ```
 spring:  
   cloud:
@@ -2120,9 +2124,12 @@ spring:
         username: nacos
         password: nacos
         server-addr: localhost:8848
+        # 区分开发 测试 发行组方便测试（dev、test、prod）
+        group: dev_group
+        namespace: 
 ```
 
-###### 配置中心(Todo)
+###### 配置中心
 
 ```
         <!-- nacos配置中心做依赖管理 -->
@@ -2130,5 +2137,140 @@ spring:
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+        <!--   加载bootstrap 新版本默认禁用了bootstrap，需要自己开启     -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+```
+
+##### application.yml修改（删除有关nacos的改到bootstrap.yml里)
+
+```
+spring:
+  cloud:
+    loadbalancer:
+      enabled: true
+    openfeign:
+      client:
+        config:
+          default:
+            # 连接超时时间 3s
+            connect-timeout: 3000
+            # 读取超时时间 1s
+            read-timeout: 1000
+          # 单独某个服务配置 会覆盖全局配置
+          user-service:
+            connect-timeout: 2000
+            read-timeout: 2000
+      httpclient:
+        hc5:
+          enabled: true
+      compression:
+        request:
+          enabled: true  #请求开启压缩功能
+          min-request-size: 2048 #最小触发压缩的大小
+          mime-types: text/xml,application/xml,application/json #触发压缩数据类型
+        response: #响应也开启压缩功能
+          enabled: true
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka
+#    # 每隔30秒 会重新拉取并更新数据,为了得到服务最新状态
+#    registry-fetch-interval-seconds: 30
+resilience4j:
+  # 熔断器
+  circuitbreaker:
+    # 定义不同的熔断器实例
+    instances:
+      # 熔断器名称
+      myCircuitBreaker:
+        base-config: default
+    configs:
+      default:
+        # 是否注册健康指示器 用于监控
+        register-health-indicator: true
+        # 滑动窗口大小 用于统计失败率
+        sliding-window-size: 10
+        # 触发熔断器的前的最小调用次数
+        minimum-number-of-calls: 3
+        # 失败率阈值 超过该值断路器将打开(需要将限流器的错误排除故障率统计)
+        failure-rate-threshold: 50
+        # 断路器打开后等待的秒
+        wait-duration-in-open-state: 10s
+        # 半开状态下允许的调用次数
+        permitted-number-of-calls-in-half-open-state: 3
+        # 是否自动从打开状态过渡到半开状态
+        automatic-transition-from-open-to-half-open-enabled: true
+        # 捕获所有异常
+        record-exceptions:
+          - java.lang.Exception
+          - java.lang.RuntimeException
+          - java.lang.Throwable
+        ignore-exceptions:
+          - io.github.resilience4j.ratelimiter.RequestNotPermitted
+  # 限流器
+  ratelimiter:
+    instances:
+      myRateLimiter:
+        base-config: default
+    configs:
+      default:
+        limitForPeriod: 5                # 每个周期允许的最大请求数
+        limitRefreshPeriod: 1s            # 限流刷新周期
+        timeoutDuration: 500ms            # 超过限流等待的最大时间
+  # 重试
+  retry:
+    instances:
+      myRetry:
+        # 最大重试次数(3 就是1次调用+2次重试)
+        maxAttempts: 3
+        # 重试之间的等待时间
+        wait-duration: 2s
+        retryExceptions:
+          - java.lang.IllegalStateException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - feign.FeignException
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+    org.springframework.web.client: DEBUG
+    com.ljl.consumer: DEBUG
+    org.springframework.cloud.circuitbreaker: DEBUG
+```
+
+###### bootstrap.yml
+
+```
+spring:
+  application:
+    name: consumer-service
+  # 指定开发环境
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      username: 'nacos'
+      password: 'nacos'
+      discovery:
+        namespace: 743cb407-170d-4c67-8d26-044ace52c462
+        # 区分开发 测试 发行组方便测试（dev、test、prod）
+        group: dev_group
+      config:
+        refresh-enabled: true
+        namespace: 743cb407-170d-4c67-8d26-044ace52c462
+        # 随便取，对应每行的group就行 非命名空间
+        group: my_group
+        file-extension: yaml
+  config:
+    import:
+      - nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}?refreshEnabled=true
+logging:
+  level:
+    com.alibaba.nacos: DEBUG
 ```
 
